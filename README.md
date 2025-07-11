@@ -1,7 +1,9 @@
 # Inception
 ## Read before start
 # SUMMARY
-## Installing Debian 12 on a Virtual Machine
+#### 1. [INSTALLING DEBIAN](https://github.com/vbachele/Inception/blob/main/README.md#INSTALLING-DEBIAN)
+
+# INSTALLING DEBIAN
 I’m currently setting up a Debian 12 virtual machine using Oracle VirtualBox as part of a development environment for future projects involving Docker, Nginx, and WordPress.
 To download the iso: https://www.debian.org/download
 
