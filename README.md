@@ -36,10 +36,12 @@ If you want to test each container individually, you can pull the official WordP
 ## Summary
 
 #### 1. [INSTALLING DEBIAN](https://github.com/mmonpeat/Inception/blob/main/README.md#INSTALLING-DEBIAN)
-#### 2. [DOCKER](#docker)
-#### 3. [NGINX](#nginx)
-#### 4. [WORDPRESS](#wordpress)
-#### 5. [MARIADB](#mariadb)
+#### 2. [SET UP](https://github.com/mmonpeat/Inception/blob/main/README.md#How-to-set-up-your-environment-in-your-vm?)
+#### 3. [DEFINITIONS](https://github.com/mmonpeat/Inception/blob/main/README.md#DEFINITIONS)
+#### 4. [DOCKER](https://github.com/mmonpeat/Inception/blob/main/README.md#DOCKER)
+#### 5. [NGINX](https://github.com/mmonpeat/Inception/blob/main/README.md#NGINX)
+#### 6. [WORDPRESS](https://github.com/mmonpeat/Inception/blob/main/README.md#WORDPRESS)
+#### 7. [MARIADB](https://github.com/mmonpeat/Inception/blob/main/README.md#MARIADB)
 
 ---
 
@@ -60,6 +62,7 @@ Yes, I’m aware this might seem like overkill for a basic Debian install. Howev
 
 ### Installation Steps
 I opted for the text-based installer (instead of the graphical one) for speed and simplicity. It's more transparent and often more reliable on VMs.
+```bash
 1. Boot Menu
 <img width="636" height="530" alt="Captura de pantalla de 2025-07-10 04-21-28" src="https://github.com/user-attachments/assets/c71e7765-bee6-4632-8979-bf984fd9791f" />
 <img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-23-52" src="https://github.com/user-attachments/assets/7c5278bd-6f41-4326-8ef2-2e1eefb19870" />
@@ -84,16 +87,37 @@ I opted for the text-based installer (instead of the graphical one) for speed an
 <img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-34-56" src="https://github.com/user-attachments/assets/23755b5b-61bb-4f63-a3d7-ccf15eaa938e" />
 <img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-55-58" src="https://github.com/user-attachments/assets/54ba5f34-6313-41e2-8648-40fbb42b0c18" />
 <img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-56-20" src="https://github.com/user-attachments/assets/1c430742-a415-4dac-a2ba-0542974d3836" />
+```
+
+## 2. How to set up your environment in your vm?
+
+#### Create a new user named after your login and assign it to the different groups
+
+```bash
+sudo adduser login
+
+sudo usermod -aG sudo login
+
+sudo usermod -aG docker login
+```
+m'he equivocat al crear el usuari durant la creacio vm pertant he creat un altre amb el login
+
+`sudo deluser --remove-home maria`
 
 
-## 2. DOCKER
-#### Definition
-actualitza sistema
-sudo apt update && sudo apt upgrade -y
+## 3. DEFINITIONS
+
+## 4. DOCKER
+
+Actualitza sistema
+`sudo apt update && sudo apt upgrade -y`
 
 Instal.la prerequisits doker
-sudo apt install -y ca-certificates curl gnupg lsb-release
 
+`sudo apt install -y ca-certificates curl gnupg lsb-release`
+
+Afegeix la clau GPG i repositori oficial de Docker
+```bash
 sudo install -m 0755 -d /etc/apt/keyrings
 
 curl -fsSL https://download.docker.com/linux/debian/gpg | \
@@ -102,31 +126,32 @@ echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
   https://download.docker.com/linux/debian $(lsb_release -cs) stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+```
+Instal·la Docker
+```bash
 sudo apt upgrade
-
-sudo docker run hello-world
-
 sudo apt install -y docker-ce docker-ce-cli containerd.io
+```
+Comprova que Docker funciona
+`sudo docker run hello-world`
 
 ### Docker Compose
-#### Definition
 
-sudo apt install docker-compose-plugin
+`sudo apt install docker-compose-plugin`
 
-docker compose version
+`docker compose version`
 
 *(Setup Docker, Docker Compose, and basic commands.)*
 
-## 3. NGINX
+## 5. NGINX
 
 *(Configuration of NGINX container with TLS.)*
 
-## 4. WORDPRESS
+## 6. WORDPRESS
 
 *(Configuration of WordPress with php-fpm.)*
 
-## 5. MARIADB
+## 7. MARIADB
 
 *(Configuration of MariaDB, users, and volumes.)*
 
