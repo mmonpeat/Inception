@@ -48,7 +48,7 @@ If you want to test each container individually, you can pull the official WordP
 ## 1. INSTALLING DEBIAN
 
 I’m currently setting up a Debian 12 virtual machine using Oracle VirtualBox as part of a development environment for future projects involving Docker, Nginx, and WordPress.
-To download the iso: https://www.debian.org/download
+To download the iso: [https://www.debian.org/download](https://cdimage.debian.org/debian-cd/12.11.0-live/amd64/iso-hybrid/) debian-live-12.11.0-amd64-standard.iso
 
 To ensure I don’t run into limitations later, I’ve assigned generous resources to the VM:
 
@@ -64,48 +64,51 @@ Yes, I’m aware this might seem like overkill for a basic Debian install. Howev
 I opted for the text-based installer (instead of the graphical one) for speed and simplicity. It's more transparent and often more reliable on VMs.
 ```bash
 1. Boot Menu
-<img width="636" height="530" alt="Captura de pantalla de 2025-07-10 04-21-28" src="https://github.com/user-attachments/assets/c71e7765-bee6-4632-8979-bf984fd9791f" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-23-52" src="https://github.com/user-attachments/assets/7c5278bd-6f41-4326-8ef2-2e1eefb19870" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-24-06" src="https://github.com/user-attachments/assets/f206a306-97cb-476d-ab0e-7d2e2a479612" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-24-56" src="https://github.com/user-attachments/assets/9f17c400-33f5-485d-b52d-d385eab6a533" />
+<img width="886" height="606" alt="Captura de pantalla de 2025-07-17 09-36-37" src="https://github.com/user-attachments/assets/930f7b67-7c36-49ab-a8a0-27f9f2ba0f43" />
+<img width="886" height="606" alt="Captura de pantalla de 2025-07-17 09-36-48" src="https://github.com/user-attachments/assets/a65ac34c-45d5-45ef-b232-d3d7c93dde2d" />
+<img width="886" height="606" alt="Captura de pantalla de 2025-07-17 09-36-57" src="https://github.com/user-attachments/assets/9899908d-92b9-40ff-9bb7-dbde0fe6db71" />
+<img width="640" height="555" alt="Captura de pantalla de 2025-07-17 09-38-20" src="https://github.com/user-attachments/assets/639ebd52-15ee-40c9-889e-9306f62b9dfe" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-42-11" src="https://github.com/user-attachments/assets/a5ab91b3-f769-4943-8521-27ea024bf9db" />
 
-2. User Creation
+User Creation
 
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-25-30" src="https://github.com/user-attachments/assets/326e93e9-dfdb-40cc-af19-ab2c2f5e7084" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-25-30" src="https://github.com/user-attachments/assets/e829f0cd-974b-4dcd-8e8d-670dd6ac7186" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-43-53" src="https://github.com/user-attachments/assets/c3ef9240-e00a-4784-8d70-6f751d4d4707" />
 
 3. Disk Partitioning
 
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-26-55" src="https://github.com/user-attachments/assets/70f5047b-1c79-4ca0-a409-0dbc33a46b20" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-27-08" src="https://github.com/user-attachments/assets/86495e98-8bf8-4624-8a24-c1200f8b3768" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-27-22" src="https://github.com/user-attachments/assets/628c33e1-aac9-4ae0-a858-bbc32e7a65ab" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-27-33" src="https://github.com/user-attachments/assets/bbe78de1-14df-4ceb-a31f-f2fbe6d3d320" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-28-23" src="https://github.com/user-attachments/assets/7bcbad71-1823-40b0-9f9a-6a15814b0c57" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-32-24" src="https://github.com/user-attachments/assets/e57f55c9-c579-4da2-9bc3-74ceb38e703d" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-33-04" src="https://github.com/user-attachments/assets/a1e7fbd5-e747-4f32-9029-776665fcda99" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-33-35" src="https://github.com/user-attachments/assets/e748135e-188d-4ab9-89e5-4342c12f5305" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-34-56" src="https://github.com/user-attachments/assets/23755b5b-61bb-4f63-a3d7-ccf15eaa938e" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-55-58" src="https://github.com/user-attachments/assets/54ba5f34-6313-41e2-8648-40fbb42b0c18" />
-<img width="800" height="678" alt="Captura de pantalla de 2025-07-10 04-56-20" src="https://github.com/user-attachments/assets/1c430742-a415-4dac-a2ba-0542974d3836" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-45-36" src="https://github.com/user-attachments/assets/15284f0f-6d38-40ee-9192-91b1eeb4850c" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-45-44" src="https://github.com/user-attachments/assets/84b97e2c-1a39-4919-9243-baeb663209ed" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-45-49" src="https://github.com/user-attachments/assets/e44b440c-3906-4877-9781-c5a4172473fd" />
+
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-45-59" src="https://github.com/user-attachments/assets/b63eb055-a9a6-408e-874d-09d4132b5b5f" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-46-25" src="https://github.com/user-attachments/assets/c8bace74-7f52-4675-83e0-a3342542f6f1" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-48-02" src="https://github.com/user-attachments/assets/e9eda6a0-9f3c-4e12-af9f-4af48cc66295" />
+
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-48-11" src="https://github.com/user-attachments/assets/6505d54e-8b8b-4c7d-8515-d83228c6569b" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-48-43" src="https://github.com/user-attachments/assets/d9c6cc4a-cdef-4552-b8aa-e97ec0f63be0" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-50-36" src="https://github.com/user-attachments/assets/9210531b-db6e-425a-89a4-e0d69c35ab92" />
+<img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-50-52" src="https://github.com/user-attachments/assets/827eaabb-0bdf-4799-b93d-12505613963f" />
+
 ```
 
 ## 2. How to set up your environment in your vm?
 
 #### Create a new user named after your login and assign it to the different groups
 
-```bash
-su
-(per entrar com superusuari i poder ficar user com a superuser)
+`su`
+per entrar com superusuari i poder ficar login com a superuser
 
-sudo adduser login
+`sudo adduser login`
 
-sudo usermod -aG sudo login
+`sudo usermod -aG sudo login`
 
-sudo usermod -aG docker login
-```
+`sudo usermod -aG docker login` //despres de instalació doker
+
 m'he equivocat al crear el usuari durant la creacio vm pertant he creat un altre amb el login
 
 `sudo deluser --remove-home maria`
+
+#### Connect with SSH to you VM
 
 
 ## 3. DEFINITIONS
