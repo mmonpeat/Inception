@@ -94,6 +94,9 @@ I opted for the text-based installer (instead of the graphical one) for speed an
 #### Create a new user named after your login and assign it to the different groups
 
 ```bash
+su
+(per entrar com superusuari i poder ficar user com a superuser)
+
 sudo adduser login
 
 sudo usermod -aG sudo login
