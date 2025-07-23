@@ -255,8 +255,17 @@ Comprova que Docker funciona
 
 
 ## 5. NGINX
+### que es NGINX?
+NGINX és un servidor web d'alt rendiment que també pot funcionar com a balancejador de càrrega i servidor proxy invers. En aquest projecte, l'utilitzarem com a:
+- Punt d'entrada únic a la infraestructura (via port 443)
+- Terminació SSL/TLS per a connexions segures
+- Proxy cap a WordPress (redirigint les peticions HTTPS al servei intern de WordPress/PHP-FPM)
+* Un balancejador de càrrega és un sistema que reparteix el tràfic d’entrada entre diversos servidors o contenidors, per evitar que un sol es col·lapsi. Això millora el rendiment i la disponibilitat.
+  Exemple: Imagina que tens 3 contenidors de WordPress, i entren 100 peticions. NGINX pot actuar com a load balancer, enviant 33 peticions a cada contenidor, equilibrant la càrrega.
+* Un proxy invers és un servidor que rep les peticions dels clients (per exemple, navegadors) i les redirigeix cap a altres serveis interns, com WordPress, MariaDB o APIs. El client no veu què hi ha darrere, només veu el proxy.
+  Exemple: Quan algú entra a https://elmeuusuari.42.fr, NGINX rep la petició al port 443, fa la connexió segura (SSL/TLS), i després la redirigeix internament cap al contenidor de WordPress pel port 9000, per exemple. El client no ho sap: per ell, tot és "el mateix servidor".
 
-*(Configuration of NGINX container with TLS.)*
+### Dockerfile per NGINX
 
 ## 6. WORDPRESS
 
