@@ -109,9 +109,88 @@ m'he equivocat al crear el usuari durant la creacio vm pertant he creat un altre
 `sudo deluser --remove-home maria`
 
 #### Connect with SSH to you VM
-
+Encenem la maquina virtual.
+Desde la terminal del sitema principal possem:
+`ssh login@127.0.0.1 -p 2222 o ssh login@10.0.2.15`
 
 ## 3. DEFINITIONS
+
+### DOCKER
+
+Docker is a platform that enables packaging applications and their dependencies into containers - lightweight, isolated environments that guarantee consistency across different environments (dev, test, production).
+
+**Key benefits:**
+- **Portability:** Containers run identically on any machine with Docker installed.
+- **Efficiency:** They share the host system's kernel, consuming fewer resources than virtual machines (VMs).
+- **Reproducibility:** `Dockerfile` allow defining infrastructure as version-controlled code.
+
+**Comparison with VMs:**  
+| Docker (Containers) | Virtual Machines (VMs) |  
+|----------------------|-------------------------|  
+| Shares host OS kernel | Includes complete OS |  
+| Fast startup (~seconds) | Slow startup (~minutes) |  
+| Lower CPU/RAM usage | More resource-intensive |  
+
+----
+
+Docker és una plataforma que permet empaquetar aplicacions i les seves dependències en **contenidors**, entorns aïllats i lleugers que garanteixen consistència entre diferents entorns (dev, test, producció).
+
+**Beneficis clau:**
+- **Portabilitat:** Els contenidors s’executen igual a qualsevol màquina amb Docker.
+- **Eficiència:** Comparteixen el nucli del sistema host, consumint menys recursos que una màquina virtual (VM).
+- **Reproduïbilitat:** Els `Dockerfile` permeten definir infraestructura com a codi (versionable).
+
+**Comparació amb VMs:**  
+| Docker (Contenidors) | Màquines Virtuals (VMs) |  
+|----------------------|-------------------------|  
+| Comparteix nucli OS | Inclou OS complet |  
+| Inici ràpid (~segons) | Inici lent (~minuts) |  
+| Menys consum de CPU/RAM | Més exigent en recursos |  
+
+---
+
+### DOCKER COMPOSE
+
+Tool for defining and managing **multi-container applications** using a `docker-compose.yml` file.  
+
+**Difference from standalone Docker:**  
+- **Without Compose:** You manually manage each container using CLI commands (`docker run`, networks, volumes).  
+- **With Compose:** Orchestrate all services (e.g., WordPress + NGINX + MariaDB) with **a single command** (`docker-compose up`).  
+
+**Usage example:**  
+```yaml
+services:
+  nginx:
+    image: nginx:alpine
+    ports: ["443:443"]
+  wordpress:
+    build: ./wordpress
+    depends_on: ["db"]
+  db:
+    image: mariadb:10.5
+    volumes: ["db_data:/var/lib/mysql"]
+```
+---- 
+
+Eina per definir i gestionar **aplicacions multi-contenidor** mitjançant un fitxer `docker-compose.yml`.  
+
+**Diferència amb Docker sol:**  
+- **Sense Compose:** Has de gestionar cada contenidor manualment, exeecutant la imatge amb comandes CLI() (`docker run`, xarxes, volums).  
+- **Amb Compose:** Orquestres tots els serveis (ex: WordPress + NGINX + MariaDB) amb **una sola comanda** (`docker-compose up`).  
+
+**Exemple d’ús:**  
+```yaml
+services:
+  nginx:
+    image: nginx:alpine
+    ports: ["443:443"]
+  wordpress:
+    build: ./wordpress
+    depends_on: ["db"]
+  db:
+    image: mariadb:10.5
+    volumes: ["db_data:/var/lib/mysql"]
+```
 
 ## 4. DOCKER
 
@@ -161,4 +240,35 @@ Comprova que Docker funciona
 
 *(Configuration of MariaDB, users, and volumes.)*
 
+## 8. CORRECIÓ ABANS COMENCAR
 
+- Before starting the evaluation, run this command in the terminal:
+"docker stop $(docker ps -qa); docker rm $(docker ps -qa);
+docker rmi -f $(docker images -qa); docker volume rm $(docker volume ls -q);
+docker network rm $(docker network ls -q) 2>/dev/null"
+
+- Read the docker-compose.yml file. There musn't be 'network: host' in
+it or 'links:'. Otherwise, the evaluation ends now.
+
+- Read the docker-compose.yml file. There must be 'network(s)' in it.
+Otherwise, the evaluation ends now.
+
+- Examine the Makefile and all the scripts in which Docker is used.
+There musn't be '--link' in any of them. Otherwise, the evaluation
+ends now.
+
+- Examine the Dockerfiles. If you see 'tail -f' or any command run in
+background in any of them in the ENTRYPOINT section, the evaluation
+ends now. Same thing if 'bash' or 'sh' are used but not for running a
+script (e.g, 'nginx & bash' or 'bash').
+
+- If the entrypoint is a script (e.g., ENTRYPOINT ["sh", "my_entrypoint.sh"],
+ENTRYPOINT ["bash", "my_entrypoint.sh"]), ensure it runs no program
+in background (e.g, 'nginx & bash').
+
+- Examine all the scripts in the repository. Ensure none of them runs
+an infinite loop.
+The following are a few examples of prohibited commands:
+'sleep infinity', 'tail -f /dev/null', 'tail -f /dev/random'
+
+- Run the Makefile.
