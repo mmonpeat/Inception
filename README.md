@@ -275,6 +275,30 @@ inception/
             └── nginx.sh
             
 ### Dockerfile per NGINX
+🔹 debian:bullseye
+Tracking de la versió estable Bullseye (rolling dentro la major release).
+Es pot actualitzar (passa de 11.6 → 11.7 automàticament quan Docker fa pull).
+No tan previsible: si una nova 11.8 surt, pot canviar el teu entorn.
+
+🔹 debian:11.7
+Versió fixa i predictible de Bullseye. Suport Fins juny 2026
+Mateix comportament sempre: ideal per entorns educatius i defensables.
+```
+FROM debian:11.7
+
+EXPOSE 443
+
+RUN apt-get update && apt-get install -y \
+	nginx \
+	openssl
+
+COPY conf/default /etc/nginx/sites-enabled/
+COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh
+
+ENTRYPOINT [ "/var/www/nginx.sh" ]
+
+CMD [ "nginx", "-g", "daemon off;" ]
+```
 
 ## 6. WORDPRESS
 
