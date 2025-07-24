@@ -302,7 +302,52 @@ ENTRYPOINT [ "/var/www/nginx.sh" ] //Executa aquest script abans de l'arrencada 
 CMD [ "nginx", "-g", "daemon off;" ] //Comanda final per iniciar NGINX. daemon off: Executa NGINX en primer pla (requerit per Docker) Es llança després de l'ENTRYPOINT
 ```
 
+conf/default
+```
+server {
+	listen 443 ssl; //Indica que NGINX escoltarà connexions al port 443 (HTTPS) amb SSL/TLS.
+    	listen [::]:443 ssl; //Equivalent per a IPv6. cal??
+
+	server_name login.42.fr;// Defineix el domini del servidor
+    	ssl_certificate /etc/ssl/certs/nginx.cert;
+    	ssl_certificate_key /etc/ssl/private/nginx.key;//Rutes als certificats SSL (autosignats o reals).
+    	ssl_protocols TLSv1.3; //Força l'ús de TLS 1.3 (més segur que TLS 1.2). (El projecte permet TLS 1.2 o 1.3.)
+
+	index index.php //Defineix index.php com a fitxer per defecte.
+	root /var/www/html; //Indica on es troben els fitxers del lloc web.
+
+	//Configuració per a totes les rutes (/). prova les rutes: L'URL directa ($uri), Si és un directori ($uri/) i Si no existeix, redirigeix a index.php passant els paràmetres ($is_args$args) (wordpress)
+	location / {
+        	try_files $uri $uri/ /index.php$is_args$args;
+	}
+```
+
+
 ## 6. WORDPRESS
+nginx/conf/default
+Configuració per a PHP (FastCGI)
+nginx
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass wordpress:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_read_timeout 300;
+    }
+
+Aquesta part gestiona les peticions a fitxers PHP:
+
+    location ~ \.php$: Aplica a totes les URLs que acabin en .php.
+
+    fastcgi_pass wordpress:9000: Envia les peticions PHP al contenidor WordPress (via port 9000, que és on escolta php-fpm). (Requereix que wordpress estigui definit a la xarxa de Docker.)
+
+    fastcgi_param SCRIPT_FILENAME: Indica a PHP quin fitxer executar.
+
+    fastcgi_read_timeout 300: Augmenta el temps d'espera per a peticions PHP (evita timeouts).
 
 *(Configuration of WordPress with php-fpm.)*
 
