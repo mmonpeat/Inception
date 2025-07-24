@@ -255,6 +255,7 @@ Comprova que Docker funciona
 
 
 ## 5. NGINX
+He tret informació del usuari: [eralonso/Inception](https://github.com/eralonso/Inception)
 ### que es NGINX?
 NGINX és un servidor web d'alt rendiment que també pot funcionar com a balancejador de càrrega i servidor proxy invers. En aquest projecte, l'utilitzarem com a:
 - Punt d'entrada únic a la infraestructura (via port 443)
@@ -321,7 +322,50 @@ server {
         	try_files $uri $uri/ /index.php$is_args$args;
 	}
 ```
+nginx/tools/nginx.sh
+Aquest script és un entrypoint per al contenidor NGINX que s'executa abans d'iniciar el servidor. 
+```
+#! /bin/bash
 
+if [ ! -f /etc/ssl/certs/nginx.cert ]; then
+	openssl req -x509 -nodes -newkey rsa:4096 -days 365 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.cert -subj "/C=ES/ST=Barcelona/L=Barcelona/O=42/OU=Education/CN=login.42.fr"
+fi
+
+exec "$@"
+```
+Fa dues coses principals:
+1. Genera Certificats SSL/TLS Autosignats (si no existeixen)
+Què fa?:
+	Comprova si ja existeix el certificat (/etc/ssl/certs/nginx.cert).
+	Si no existeix, en genera un nou amb openssl:
+		Algoritme: RSA de 4096 bits (més segur que 2048).
+		Validesa: 365 dies.
+		Emmagatzematge:
+			Clau privada a /etc/ssl/private/nginx.key.
+			Certificat públic a /etc/ssl/certs/nginx.cert.
+		Subjecte (subj):
+			C=ES: País (Espanya).
+			ST=Barcelona: Província.
+			L=Barcelona: Localitat.
+			O=42: Organització.
+			OU=Education: Departament.
+			CN=login.42.fr: Nom comú (domini). (Canvia login pel teu usuari!)
+Per què és important?:
+	El projecte requereix HTTPS amb TLS 1.2/1.3.
+	Els certificats autosignats són suficients (no calen certificats reals com Let's Encrypt).
+
+2. Executa la Comanda Original del Contenidor
+
+`exec "$@"`
+
+Què fa?:
+	Passa el control a la comanda definida a CMD del Dockerfile (normalment nginx -g "daemon off;").
+        exec: Reemplaça el procés actual (script) pel nou procés (NGINX), mantenint el PID 1.
+        "$@": Passa tots els arguments rebuts al nou procés.
+   
+Per què és important?:
+	Assegura que NGINX sigui el procés principal del contenidor (requerit per Docker).
+	Evita que el contenidor es tanqui després d'executar el script.
 
 ## 6. WORDPRESS
 nginx/conf/default
