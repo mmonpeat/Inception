@@ -255,6 +255,7 @@ Comprova que Docker funciona
 
 
 ## 5. NGINX
+He tret informació del usuari: [eralonso/Inception](https://github.com/eralonso/Inception)
 ### que es NGINX?
 NGINX és un servidor web d'alt rendiment que també pot funcionar com a balancejador de càrrega i servidor proxy invers. En aquest projecte, l'utilitzarem com a:
 - Punt d'entrada únic a la infraestructura (via port 443)
@@ -286,21 +287,111 @@ Mateix comportament sempre: ideal per entorns educatius i defensables.
 ```
 FROM debian:11.7
 
-EXPOSE 443
+EXPOSE 443		//Declara que el contenidor escoltarà al port 443 (HTTPS).
+			//No obre el port físicament (es farà a docker-compose.yml) i Bloqueja implícitament el port 80 (com demana el projecte)
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \ 
 	nginx \
 	openssl
+			//Actualitza l'índex de paquets i instala nginx: Servidor web, openssl: Generar certificats TLS (Nota: -y auto-accepta instal·lacions)
 
-COPY conf/default /etc/nginx/sites-enabled/
-COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh
+COPY conf/default /etc/nginx/sites-enabled/ 		//Sobreescriu la configuració per defecte que posem en el fitxer default
+COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh 	//Copia un script d'inici (nginx.sh) al contenidor. --chmod=755: Assigna permisos d'execució (owner: rwx, grup/altres: rx) (Necessari perquè l'ENTRYPOINT pugui executar-lo)
 
-ENTRYPOINT [ "/var/www/nginx.sh" ]
+ENTRYPOINT [ "/var/www/nginx.sh" ] 			//Executa aquest script abans de l'arrencada del NGINX
 
-CMD [ "nginx", "-g", "daemon off;" ]
+CMD [ "nginx", "-g", "daemon off;" ] 			//Comanda final per iniciar NGINX. daemon off: Executa NGINX en primer pla (requerit per Docker) Es llança després de l'ENTRYPOINT
 ```
 
+conf/default
+```
+server {
+	listen 443 ssl; 			//Indica que NGINX escoltarà connexions al port 443 (HTTPS) amb SSL/TLS.
+    	listen [::]:443 ssl; 			//Equivalent per a IPv6. cal??
+
+	server_name login.42.fr;		// Defineix el domini del servidor
+    	ssl_certificate /etc/ssl/certs/nginx.cert;
+    	ssl_certificate_key /etc/ssl/private/nginx.key;		//Rutes als certificats SSL (autosignats o reals).
+    	ssl_protocols TLSv1.3; 					//Força l'ús de TLS 1.3 (més segur que TLS 1.2). (El projecte permet TLS 1.2 o 1.3.)
+
+	index index.php 			//Defineix index.php com a fitxer per defecte.
+	root /var/www/html; 			//Indica on es troben els fitxers del lloc web.
+
+	//Configuració per a totes les rutes (/). prova les rutes: L'URL directa ($uri), Si és un directori ($uri/) i Si no existeix, redirigeix a index.php passant els paràmetres ($is_args$args) (wordpress)
+	location / {
+        	try_files $uri $uri/ /index.php$is_args$args;
+	}
+```
+nginx/tools/nginx.sh
+Aquest script és un entrypoint per al contenidor NGINX que s'executa abans d'iniciar el servidor. 
+```
+#! /bin/bash
+
+if [ ! -f /etc/ssl/certs/nginx.cert ]; then
+	openssl req -x509 -nodes -newkey rsa:4096 -days 365 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.cert -subj "/C=ES/ST=Barcelona/L=Barcelona/O=42/OU=Education/CN=login.42.fr"
+fi
+
+exec "$@"
+```
+Fa dues coses principals:
+1. Genera Certificats SSL/TLS Autosignats (si no existeixen)
+Què fa?:
+	Comprova si ja existeix el certificat (/etc/ssl/certs/nginx.cert).
+	Si no existeix, en genera un nou amb openssl:
+		Algoritme: RSA de 4096 bits (més segur que 2048).
+		Validesa: 365 dies.
+		Emmagatzematge:
+			Clau privada a /etc/ssl/private/nginx.key.
+			Certificat públic a /etc/ssl/certs/nginx.cert.
+		Subjecte (subj):
+			C=ES: País (Espanya).
+			ST=Barcelona: Província.
+			L=Barcelona: Localitat.
+			O=42: Organització.
+			OU=Education: Departament.
+			CN=login.42.fr: Nom comú (domini). (Canvia login pel teu usuari!)
+Per què és important?:
+	El projecte requereix HTTPS amb TLS 1.2/1.3.
+	Els certificats autosignats són suficients (no calen certificats reals com Let's Encrypt).
+
+2. Executa la Comanda Original del Contenidor
+
+`exec "$@"`
+
+Què fa?:
+	Passa el control a la comanda definida a CMD del Dockerfile (normalment nginx -g "daemon off;").
+        exec: Reemplaça el procés actual (script) pel nou procés (NGINX), mantenint el PID 1.
+        "$@": Passa tots els arguments rebuts al nou procés.
+   
+Per què és important?:
+	Assegura que NGINX sigui el procés principal del contenidor (requerit per Docker).
+	Evita que el contenidor es tanqui després d'executar el script.
+
 ## 6. WORDPRESS
+nginx/conf/default
+Configuració per a PHP (FastCGI)
+nginx
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass wordpress:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_read_timeout 300;
+    }
+
+Aquesta part gestiona les peticions a fitxers PHP:
+
+    location ~ \.php$: Aplica a totes les URLs que acabin en .php.
+
+    fastcgi_pass wordpress:9000: Envia les peticions PHP al contenidor WordPress (via port 9000, que és on escolta php-fpm). (Requereix que wordpress estigui definit a la xarxa de Docker.)
+
+    fastcgi_param SCRIPT_FILENAME: Indica a PHP quin fitxer executar.
+
+    fastcgi_read_timeout 300: Augmenta el temps d'espera per a peticions PHP (evita timeouts).
 
 *(Configuration of WordPress with php-fpm.)*
 
