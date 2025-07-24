@@ -286,35 +286,35 @@ Mateix comportament sempre: ideal per entorns educatius i defensables.
 ```
 FROM debian:11.7
 
-EXPOSE 443//Declara que el contenidor escoltarà al port 443 (HTTPS).
-//No obre el port físicament (es farà a docker-compose.yml) i Bloqueja implícitament el port 80 (com demana el projecte)
+EXPOSE 443		//Declara que el contenidor escoltarà al port 443 (HTTPS).
+			//No obre el port físicament (es farà a docker-compose.yml) i Bloqueja implícitament el port 80 (com demana el projecte)
 
 RUN apt-get update && apt-get install -y \ 
 	nginx \
 	openssl
-//Actualitza l'índex de paquets i instala nginx: Servidor web, openssl: Generar certificats TLS (Nota: -y auto-accepta instal·lacions)
+			//Actualitza l'índex de paquets i instala nginx: Servidor web, openssl: Generar certificats TLS (Nota: -y auto-accepta instal·lacions)
 
-COPY conf/default /etc/nginx/sites-enabled/ //Sobreescriu la configuració per defecte que posem en el fitxer default
-COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh //Copia un script d'inici (nginx.sh) al contenidor. --chmod=755: Assigna permisos d'execució (owner: rwx, grup/altres: rx) (Necessari perquè l'ENTRYPOINT pugui executar-lo)
+COPY conf/default /etc/nginx/sites-enabled/ 		//Sobreescriu la configuració per defecte que posem en el fitxer default
+COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh 	//Copia un script d'inici (nginx.sh) al contenidor. --chmod=755: Assigna permisos d'execució (owner: rwx, grup/altres: rx) (Necessari perquè l'ENTRYPOINT pugui executar-lo)
 
-ENTRYPOINT [ "/var/www/nginx.sh" ] //Executa aquest script abans de l'arrencada del NGINX
+ENTRYPOINT [ "/var/www/nginx.sh" ] 			//Executa aquest script abans de l'arrencada del NGINX
 
-CMD [ "nginx", "-g", "daemon off;" ] //Comanda final per iniciar NGINX. daemon off: Executa NGINX en primer pla (requerit per Docker) Es llança després de l'ENTRYPOINT
+CMD [ "nginx", "-g", "daemon off;" ] 			//Comanda final per iniciar NGINX. daemon off: Executa NGINX en primer pla (requerit per Docker) Es llança després de l'ENTRYPOINT
 ```
 
 conf/default
 ```
 server {
-	listen 443 ssl; //Indica que NGINX escoltarà connexions al port 443 (HTTPS) amb SSL/TLS.
-    	listen [::]:443 ssl; //Equivalent per a IPv6. cal??
+	listen 443 ssl; 			//Indica que NGINX escoltarà connexions al port 443 (HTTPS) amb SSL/TLS.
+    	listen [::]:443 ssl; 			//Equivalent per a IPv6. cal??
 
-	server_name login.42.fr;// Defineix el domini del servidor
+	server_name login.42.fr;		// Defineix el domini del servidor
     	ssl_certificate /etc/ssl/certs/nginx.cert;
-    	ssl_certificate_key /etc/ssl/private/nginx.key;//Rutes als certificats SSL (autosignats o reals).
-    	ssl_protocols TLSv1.3; //Força l'ús de TLS 1.3 (més segur que TLS 1.2). (El projecte permet TLS 1.2 o 1.3.)
+    	ssl_certificate_key /etc/ssl/private/nginx.key;		//Rutes als certificats SSL (autosignats o reals).
+    	ssl_protocols TLSv1.3; 					//Força l'ús de TLS 1.3 (més segur que TLS 1.2). (El projecte permet TLS 1.2 o 1.3.)
 
-	index index.php //Defineix index.php com a fitxer per defecte.
-	root /var/www/html; //Indica on es troben els fitxers del lloc web.
+	index index.php 			//Defineix index.php com a fitxer per defecte.
+	root /var/www/html; 			//Indica on es troben els fitxers del lloc web.
 
 	//Configuració per a totes les rutes (/). prova les rutes: L'URL directa ($uri), Si és un directori ($uri/) i Si no existeix, redirigeix a index.php passant els paràmetres ($is_args$args) (wordpress)
 	location / {
