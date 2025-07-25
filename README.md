@@ -314,12 +314,12 @@ server {
     	ssl_certificate_key /etc/ssl/private/nginx.key;		//Rutes als certificats SSL (autosignats o reals).
     	ssl_protocols TLSv1.3; 					//Força l'ús de TLS 1.3 (més segur que TLS 1.2). (El projecte permet TLS 1.2 o 1.3.)
 
-	index index.php 			//Defineix index.php com a fitxer per defecte.
+	index index.html 			//Defineix index.php com a fitxer per defecte, per wordpress mes endevant
 	root /var/www/html; 			//Indica on es troben els fitxers del lloc web.
 
 	//Configuració per a totes les rutes (/). prova les rutes: L'URL directa ($uri), Si és un directori ($uri/) i Si no existeix, redirigeix a index.php passant els paràmetres ($is_args$args) (wordpress)
 	location / {
-        	try_files $uri $uri/ /index.php$is_args$args;
+        	try_files $uri $uri/ /index.html$is_args$args; ///index.php$is_args$args;
 	}
 ```
 nginx/tools/nginx.sh
