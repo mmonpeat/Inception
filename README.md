@@ -293,9 +293,12 @@ EXPOSE 443		//Declara que el contenidor escoltarà al port 443 (HTTPS).
 RUN apt-get update && apt-get install -y \ 
 	nginx \
 	openssl
+	curl \
+	procps		// aquestes son per provar nginxs BORRAR DESPRES
 			//Actualitza l'índex de paquets i instala nginx: Servidor web, openssl: Generar certificats TLS (Nota: -y auto-accepta instal·lacions)
 
 COPY conf/default /etc/nginx/sites-enabled/ 		//Sobreescriu la configuració per defecte que posem en el fitxer default
+COPY html/index.html /var/www/html		// aquestes son per provar nginxs BORRAR DESPRES
 COPY --chmod=755 tools/nginx.sh /var/www/nginx.sh 	//Copia un script d'inici (nginx.sh) al contenidor. --chmod=755: Assigna permisos d'execució (owner: rwx, grup/altres: rx) (Necessari perquè l'ENTRYPOINT pugui executar-lo)
 
 ENTRYPOINT [ "/var/www/nginx.sh" ] 			//Executa aquest script abans de l'arrencada del NGINX
