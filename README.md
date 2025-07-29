@@ -62,7 +62,7 @@ Yes, I’m aware this might seem like overkill for a basic Debian install. Howev
 
 ### Installation Steps
 I opted for the text-based installer (instead of the graphical one) for speed and simplicity. It's more transparent and often more reliable on VMs.
-```bash
+
 1. Boot Menu
 <img width="886" height="606" alt="Captura de pantalla de 2025-07-17 09-36-37" src="https://github.com/user-attachments/assets/930f7b67-7c36-49ab-a8a0-27f9f2ba0f43" />
 <img width="886" height="606" alt="Captura de pantalla de 2025-07-17 09-36-48" src="https://github.com/user-attachments/assets/a65ac34c-45d5-45ef-b232-d3d7c93dde2d" />
@@ -89,7 +89,6 @@ User Creation
 <img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-50-36" src="https://github.com/user-attachments/assets/9210531b-db6e-425a-89a4-e0d69c35ab92" />
 <img width="794" height="679" alt="Captura de pantalla de 2025-07-17 09-50-52" src="https://github.com/user-attachments/assets/827eaabb-0bdf-4799-b93d-12505613963f" />
 
-```
 
 ## 2. How to set up your environment in your vm?
 
