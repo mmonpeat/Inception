@@ -282,15 +282,17 @@ NGINX és un servidor web d'alt rendiment que també pot funcionar com a balance
   Exemple: Imagina que tens 3 contenidors de WordPress, i entren 100 peticions. NGINX pot actuar com a load balancer, enviant 33 peticions a cada contenidor, equilibrant la càrrega.
 * Un proxy invers és un servidor que rep les peticions dels clients (per exemple, navegadors) i les redirigeix cap a altres serveis interns, com WordPress, MariaDB o APIs. El client no veu què hi ha darrere, només veu el proxy.
   Exemple: Quan algú entra a https://elmeuusuari.42.fr, NGINX rep la petició al port 443, fa la connexió segura (SSL/TLS), i després la redirigeix internament cap al contenidor de WordPress pel port 9000, per exemple. El client no ho sap: per ell, tot és "el mateix servidor".
-
+  
+```
 inception/
 └── srcs/
     └── nginx/
-        ├── Dockerfile
+    	├── Dockerfile
         ├── conf/
         │   └── default
         └── tools/
             └── nginx.sh
+```
             
 ### Dockerfile per NGINX
 🔹 debian:bullseye
