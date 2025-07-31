@@ -48,7 +48,7 @@ If you want to test each container individually, you can pull the official WordP
 ## 1. INSTALLING DEBIAN
 
 I’m currently setting up a Debian 12 virtual machine using Oracle VirtualBox as part of a development environment for future projects involving Docker, Nginx, and WordPress.
-To download the iso: [https://www.debian.org/download](https://cdimage.debian.org/debian-cd/12.11.0-live/amd64/iso-hybrid/) debian-live-12.11.0-amd64-standard.iso
+To download the iso: [https://www.debian.org/download](https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/) [ISO] debian-live-12.11.0-amd64-standard.iso
 
 To ensure I don’t run into limitations later, I’ve assigned generous resources to the VM:
 
