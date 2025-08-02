@@ -417,8 +417,88 @@ Aquesta part gestiona les peticions a fitxers PHP:
 
 *(Configuration of WordPress with php-fpm.)*
 
-## 7. MARIADB
+PHP FPM (FastCGI Process Manager)
+És una alternativa moderna i eficient al clàssic mètode de fer servir PHP com a mòdul d'Apache. PHP-FPM:
+- Separa l'execució del codi PHP del servidor web (com Nginx o Apache).
+- Gestiona múltiples processos PHP que atenen peticions entrants.
+- Ofereix més control sobre ús de memòria, escalabilitat i rendiment.
+Funciona com una “fàbrica de processos PHP” que espera peticions per executar codi PHP i retornar-ne la resposta.
 
+pool (conjunt o grup) --> Un conjunt de processos PHP gestionats amb una configuració comuna.
+
+Pensa en PHP-FPM com un restaurant, i els pools com equips de cuiners:
+- PHP-FPM = El restaurant que rep comandes (peticions PHP)
+- Pool = Equip de cuiners amb normes pròpies (quants treballen, quan entren, quan descansen)
+- El servidor web (Nginx o Apache) = Cambrer que rep la comanda i la porta a cuina
+    
+```
+inception/
+└── srcs/
+    └── requirements
+	└──wordpress/
+	    	├── Dockerfile
+	        ├── conf/
+	        │   └── wordpress_pool.conf
+	        └── tools/
+	            └── wordpress.sh
+```
+
+conf/wordpres_pool.conf
+
+```
+[wordpress_site] //Defineix el nom del "pool" PHP. Pot ser útil per identificar-lo als logs o en entorns multi-site.
+
+//El procés PHP-FPM s'executarà amb aquest usuari/grup del sistema
+user = www-data
+group = www-data
+
+listen = 0.0.0.0:9000
+//PHP-FPM escolta a totes les IPs del contenidor (0.0.0.0) pel port 9000
+//útil si el servidor web (ex: Nginx) està en un contenidor separat i es connecta per IP o xarxa Docker.
+
+//
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0660
+
+//
+pm = dynamic //Mode "dynamic": PHP-FPM crearà processos segons la càrrega. Alternatives són static o ondemand.
+pm.max_children = 25 //Màxim de processos PHP simultanis. Si tens més trànsit que això, les peticions s'enquedaran.
+pm.start_servers = 5 //Inicia 5 processos de PHP quan arrenca el pool.
+//PHP-FPM mantindrà com a mínim 1 procés "esperant" i com a màxim 10 sense feina abans de matar-los.
+pm.min_spare_servers = 1
+pm.max_spare_servers = 10
+```
+
+tools/wordpress.sh
+```
+#! /bin/bash
+
+//només executarà el bloc interior si no existeix el fitxer wp-config.php. Això evita reinstal·lar WordPress cada cop que s’arrenca el contenidor.
+if [ ! -f wp-config.php ]; then
+	wp core download --allow-root //Baixa els fitxers base de WordPress. && permet executar com a root (no recomanat fora de contenidors).
+	wp config create --dbname=$DATA_BASE_NAME --dbuser=$MARIADB_USER --dbpass=$MARIADB_USER_PASSWORD --dbhost=$DATA_BASE_HOSTNAME --allow-root //Crea wp-config.php amb les variables d’entorn de la base de dades (MySQL/MariaDB).
+	wp core install --url=$DOMAIN_NAME --title="$WORDPRESS_TITLE" --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --skip-email --allow-root // Instal·la WordPress amb:L’URL del lloc (--url), Títol del lloc (--title), Usuari admin, contrasenya, email, --skip-email: no envia correu de confirmació, --allow-root: segueix sent necessari dins Docker
+
+	wp user create $WORDPRESS_USER $WORDPRESS_USER_EMAIL --role=author --user_pass=$WORDPRESS_USER_PASSWORD --allow-root // Crea un usuari addicional amb rol d’autor
+	wp theme install twentytwentytwo --activate --allow-root //Instal·la i activa el tema twentytwentytwo.
+fi
+
+/usr/sbin/php-fpm7.4 -F;// Inicia el servidor PHP-FPM versió 7.4 en mode foreground (-F), perquè el procés no surti (necessari dins d’un contenidor Docker — el PID 1 ha de quedar actiu).
+```
+
+## 7. MARIADB
+```
+inception/
+└── srcs/
+    └── requirements
+	└── nginx/
+	    	├── Dockerfile
+	        ├── conf/
+	        │   └── mariadb.conf
+	        └── tools/
+	            └── mariadb.sh
+```
 *(Configuration of MariaDB, users, and volumes.)*
 
 ## 8. CORRECIÓ ABANS COMENCAR
