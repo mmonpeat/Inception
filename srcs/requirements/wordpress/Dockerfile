@@ -1,4 +1,4 @@
-FROM debian:11.7
+FROM debian:12.0
 
 EXPOSE 9000
 
