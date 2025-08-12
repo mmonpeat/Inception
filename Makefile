@@ -8,9 +8,7 @@ COMPOSE = $(DOCKER) compose
 #                               SOURCES                                        #
 # ╚══════════════════════════════════════════════════════════════════════════╝ # 
 
-MANDATORY_PATH = -f ./srcs/mandatory.yml
-BONUS_PATH = -f ./srcs/bonus.yml
-ELK_PATH = -f ./srcs/elk.yml
+MANDATORY_PATH = -f ./srcs/docker-compose.yml
 ENV_SAMPLE= ./srcs/.env.sample
 
 # ╔══════════════════════════════════════════════════════════════════════════╗ #  
@@ -32,12 +30,9 @@ NC=\033[0m # No color
 up: 
 	@$(COMPOSE) $(MANDATORY_PATH) $@ --build -d
 
-bonus: 
-	@$(COMPOSE) ${MANDATORY_PATH} $(BONUS_PATH) up --build -d
-
 setup:
-	mkdir -p /home/deordone/data/wordpress
-	mkdir -p /home/deordone/data/mariadb
+	mkdir -p /home/mmonpeat/data/wordpress
+	mkdir -p /home/mmonpeat/data/mariadb
 	cp ${ENV_SAMPLE} srcs/.env
 	mkdir secrets
 
@@ -47,8 +42,6 @@ it:
 clean: images
 	@echo
 	@$(COMPOSE) $(MANDATORY_PATH) down
-	@$(COMPOSE) $(BONUS_PATH) down
-	@$(COMPOSE) $(ELK_PATH) down
 	@printf "$(RED)Removing images above$(NC)\n"
 	@$(DOCKER) container prune -f && $(DOCKER) image prune -a -f
 	@printf "$(GREEN) $@ COMPLETE! $(NC)\n"
