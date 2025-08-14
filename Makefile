@@ -34,13 +34,13 @@ END=\033[0m # No color
 #                               RULES                                          #
 # ╚══════════════════════════════════════════════════════════════════════════╝ # 
 
-all: setup build up
+all: build up
 
 build:
-	@$(COMPOSE) $(MANDATORY_PATH) $@ --build
+	@$(COMPOSE) $(MANDATORY_PATH) build
 
 up:
-    @$(COMPOSE) $(MANDATORY_PATH) up -d
+	@$(COMPOSE) $(MANDATORY_PATH) up -d
 
 setup:
 	mkdir -p $(WP_DIR)
@@ -49,6 +49,10 @@ setup:
 	mkdir secrets
 
 it:
+	@if [ -z "$(ID)" ]; then \
+		echo "❌ Has d'especificar un ID o nom de contenidor: make it ID=<container_id>"; \
+		exit 1; \
+	fi
 	@$(DOCKER) exec -it $(ID) sh
 
 clean:
