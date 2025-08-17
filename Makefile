@@ -43,17 +43,52 @@ up:
 	@$(COMPOSE) $(MANDATORY_PATH) up -d
 
 setup:
-	mkdir -p $(WP_DIR)
-	mkdir -p $(DB_DIR)
-	cp ${ENV_SAMPLE} srcs/.env
-	mkdir secrets
+	@echo "⚙️  Configurant entorn..."
+
+	@if [ ! -d "$(WP_DIR)" ]; then \
+		echo "📂 Creant directori WordPress: $(WP_DIR)"; \
+		mkdir -p $(WP_DIR); \
+	else \
+		echo "✅ Directori WordPress ja existeix: $(WP_DIR)"; \
+	fi
+
+	@if [ ! -d "$(DB_DIR)" ]; then \
+		echo "📂 Creant directori Base de Dades: $(DB_DIR)"; \
+		mkdir -p $(DB_DIR); \
+	else \
+		echo "✅ Directori Base de Dades ja existeix: $(DB_DIR)"; \
+	fi
+
+	@if [ ! -f "srcs/.env" ]; then \
+		echo "📝 Copiant fitxer d'entorn des de $(ENV_SAMPLE)"; \
+		cp $(ENV_SAMPLE) srcs/.env; \
+	else \
+		echo "✅ Fitxer d'entorn ja existeix: srcs/.env"; \
+	fi
+
+	@if [ ! -d "secrets" ]; then \
+		echo "🔒 Creant directori de secrets"; \
+		mkdir secrets; \
+	else \
+		echo "✅ Directori de secrets ja existeix"; \
+	fi
+
+	@if [ -d "$(HOME_DIR)/passwords" ]; then \
+		echo "🔑 Movent fitxers de $(HOME_DIR)/passwords a secrets/"; \
+		mv $(HOME_DIR)/passwords/* secrets/ 2>/dev/null || true; \
+	else \
+		echo "ℹ️  No s'ha trobat cap directori de passwords a $(HOME_DIR)/passwords"; \
+	fi
+
+	@echo "✨ Setup completat amb èxit!"
 
 it:
 	@if [ -z "$(ID)" ]; then \
 		echo "❌ Has d'especificar un ID o nom de contenidor: make it ID=<container_id>"; \
 		exit 1; \
 	fi
-	@$(DOCKER) exec -it $(ID) sh
+	@echo "🚀 Obrint shell dins de contenidor '$(ID)'..."
+	@$(DOCKER) exec -it $(ID) bash 2>/dev/null || $(DOCKER) exec -it $(ID) sh
 
 clean:
 	@echo
@@ -66,7 +101,7 @@ clean:
 fclean: clean
 	@echo
 	@printf "$(BOLD)🔥 Neteja COMPLETA...$(END)\n"
-	@$(COMPOSE) down --volumes --remove-orphans
+	@$(COMPOSE) $(MANDATORY_PATH) down --volumes --remove-orphans
 	@$(DOCKER) system prune -a --volumes --force
 	@echo
 	@printf "$(GREEN)COMPLETE! $(END)\n"
@@ -94,6 +129,7 @@ logs:
 help:
 	@echo "\n$(BOLD)🚀 Inception Project Makefile Help$(END)"
 	@echo "make all     → Crear volums, construir i arrencar serveis"
+	@echo "make setup   → Construir i moure el necessari perque el projecte funcioni"
 	@echo "make build   → Construir només imatges"
 	@echo "make up      → Arrencar contenidors"
 	@echo "make down    → Aturar contenidors"
