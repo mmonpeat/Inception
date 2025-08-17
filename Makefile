@@ -34,7 +34,7 @@ END=\033[0m # No color
 #                               RULES                                          #
 # ╚══════════════════════════════════════════════════════════════════════════╝ # 
 
-all: build up
+all: setup build up
 
 build:
 	@$(COMPOSE) $(MANDATORY_PATH) build
