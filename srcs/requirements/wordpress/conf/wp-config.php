@@ -8,9 +8,9 @@ if ($db_password === false)
 	exit;
 }
 
-define( 'DB_NAME', getenv('MYSQL_DATABASE') );
-define( 'DB_USER', getenv('MYSQL_USER') );
-define('DB_PASSWORD', "$db_password");
+define( 'DB_NAME', getenv('WP_DB') );
+define( 'DB_USER', getenv('WP_DB_USER') );
+define('DB_PASSWORD', "$db_password" );
 define( 'DB_HOST', getenv('WP_HOST') );
 define( 'DB_CHARSET', getenv('WP_CHARSET') );
 define( 'DB_COLLATE', '' );

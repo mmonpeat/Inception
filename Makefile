@@ -7,8 +7,8 @@ COMPOSE = $(DOCKER) compose
 # Rutes dels volums persistents
 HOME_DIR = /home/mmonpeat
 DATA_DIR = $(HOME_DIR)/data
-DB_DIR = $(DATA_DIR)/wordpress_db
-WP_DIR = $(DATA_DIR)/wordpress_cont
+DB_DIR = $(DATA_DIR)/mariadb
+WP_DIR = $(DATA_DIR)/wordpress
 
 # ╔══════════════════════════════════════════════════════════════════════════╗ #  
 #                               SOURCES                                        #

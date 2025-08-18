@@ -29,4 +29,4 @@ COPY	--chmod=755 ${WP_SCRIPT}wp_entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE ${WP_PORT}
-CMD ["php"]
+CMD ["php-fpm82", "-F"]
