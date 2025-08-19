@@ -88,7 +88,7 @@ it:
 		exit 1; \
 	fi
 	@echo "🚀 Obrint shell dins de contenidor '$(ID)'..."
-	@$(DOCKER) exec -it $(ID) bash 2>/dev/null || $(DOCKER) exec -it $(ID) sh
+	@$(DOCKER) exec -it $(ID) sh
 
 clean:
 	@echo
