@@ -75,7 +75,7 @@ setup:
 
 	@if [ -d "$(HOME_DIR)/passwords" ]; then \
 		echo "🔑 Movent fitxers de $(HOME_DIR)/passwords a secrets/"; \
-		mv $(HOME_DIR)/passwords/* secrets/ 2>/dev/null || true; \
+		cp $(HOME_DIR)/passwords/* secrets/ 2>/dev/null || true; \
 	else \
 		echo "ℹ️  No s'ha trobat cap directori de passwords a $(HOME_DIR)/passwords"; \
 	fi
@@ -124,7 +124,7 @@ status:
 
 logs:
 	@printf "$(BOLD)📜 Logs de tots els serveis$(END)\n"
-	$(COMPOSE) logs -f
+	$(COMPOSE) $(MANDATORY_PATH) logs
 
 help:
 	@echo "\n$(BOLD)🚀 Inception Project Makefile Help$(END)"
@@ -132,7 +132,6 @@ help:
 	@echo "make setup   → Construir i moure el necessari perque el projecte funcioni"
 	@echo "make build   → Construir només imatges"
 	@echo "make up      → Arrencar contenidors"
-	@echo "make down    → Aturar contenidors"
 	@echo "make clean   → Neteja bàsica (contenidors, xarxes, volums interns)"
 	@echo "make fclean  → Neteja total (tot incloent imatges i volums persistents)"
 	@echo "make re      → Neteja total i reconstrucció"
